@@ -805,7 +805,7 @@ function weed_strain(){
 			'editor',
 			'excerpt',
 			'thumbnail',
-			'comments',
+			'category',
 		),
 		'menu_icon'			=>'dashicons-format-groups',
 		'taxonomies'		=> array('category'),
@@ -826,7 +826,7 @@ function strain_shortcode(){
   
     $args = array(
                     'post_type'      => 'strains',
-                    'posts_per_page' => '5',
+                    'posts_per_page' => '10',
                     'publish_status' => 'published',
                  );
   
@@ -856,28 +856,49 @@ function strain_shortcode(){
 add_shortcode( 'strains', 'strain_shortcode' ); 
   
 
-//shortcode goes here
+//edit woocommerce page
+//remove the default wrappers
 
-// function register_widget_areas(){
-// 	//profile picture
-// 	register_sidebar(array(
-// 		'name' 			=> 'Picture',
-// 		'id' 			=> 'profile-pic',
-// 		'description' 	=> 'The picture of the strain.',
-// 		'before_widget'	=>	'<section class="profile-pic">',
-//  		'after_widget'	=>	'</section>',
-//  		'before_title'	=>	'<h4>',
-//  		'after_title'	=> '</h4>',
-// 	));
-// 	//description/info
-// 	register_sidebar(array(
-// 		'name' 			=> 'Information',
-// 		'id' 			=> 'profile-info',
-// 		'description' 	=> 'Information about the strain.',
-// 		'before_widget'	=>	'<section class="profile-info">',
-//  		'after_widget'	=>	'</section>',
-//  		'before_title'	=>	'<h4>',
-//  		'after_title'	=> '</h4>',
-// 	));
-// }
-// add_actions('widget_init','register_widget_areas');
+remove_action('woocommerce_before_main_content','woocommerce_output_content_wrapper', 10);
+remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
+
+// remove hooks
+remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_price', 10); //single price
+remove_action('woocommerce_after_shop_loop_item_title','woocommerce_template_loop_price', 10); //shop price
+remove_action('woocommerce_product_tab','woocommerce_product_reviews_tab', 30); //reviews tab
+remove_action('woocommerce_product_tabs_panel','woocommerce_product_tabs_panel', 30); //reviews panel
+remove_action('woocommerce_single_product_summary','woocommerce_template_single_excerpt', 20); // short description
+remove_action('woocommerce_single_product_summary','woocommerce_template_single_add_to_cart', 30); // add to cart btn
+remove_action('woocommerce_after_single_product_summary','woocommerce_output_product_data_tabs',10); // data like sku
+remove_action('woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15); //upsell products
+remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20); // related products
+remove_action('woocommerce_single_product_summary','woocommerce_template_single_meta', 40); // meta data
+
+//new wrappers
+function my_theme_wrapper_start(){
+	echo '<main id="mynewmain">';
+}
+function my_theme_wrapper_end(){
+	echo '</main>';
+}
+
+//and the woocommerce support
+
+function mytheme_add_woocommerce_support(){
+	add_theme_support('woocommerce'); //calls in all the support for woocommerce
+	add_theme_support('wc-product-gallery-zoom');
+	add_theme_support('wc-product-lightbox');
+	add_theme_support('wc-product-gallery-slider');
+}
+
+add_action('after_setup_theme','mytheme_add_woocommerce_support');
+// add our hooks back in a different order
+
+add_action('woocommerce_single_product_summary','woocommerce_template_single_price', 10);
+add_action('woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10);
+add_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 10);
+add_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 15);
+add_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 20);
+add_action('woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 25);
+add_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 25);
+add_action('woocommerce_after_single_product_summary', 'woocommerce_out_product_data_tabs', 30);

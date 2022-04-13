@@ -1,33 +1,35 @@
 <?php
 /**
- * Template Name: Products Template
- * Template Post Type: product
- **/
+* Template Name: Products Template
+* Template Post Type: product
+**/
 get_header('shop');
 ?>
-
 <div class="wrap">
-    <div class="before-main">
-    <?php
+<?php
+/**
+* woocommerce_before_main_content hook
+* @hooked woocommerce_output_content_wrapper - 10
+* @hooked woocommerce_breadcrumb - 20
+*/
 
-    do_action('woocommerce_before_main_content');
-    ?>
-    </div>
-    <main id="product-main">
-        <?php 
-        woocommerce_content();
-         ?>
-    </main>
-    <div class="after-main">
-    <?php
-    do_action('woocommerce_after_main_content');
-    do_action('woocommerce_sidebar');
-    ?>
-    </div>
-</div>
+do_action('woocommerce_before_main_content');
+my_theme_wrapper_start();
+?>
+
+<?php woocommerce_content(); ?>
 
 <?php
 
-get_footer('shop');
+my_theme_wrapper_end();
 
+/**
+* woocommerce_sidebar hook
+* @hooked woocommerce_get_sidebar - 10
+*/
+do_action('woocommerce_sidebar');
+?>
+</div>
+<?php
+get_footer('shop');
 ?>
