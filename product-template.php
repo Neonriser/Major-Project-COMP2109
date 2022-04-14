@@ -10,7 +10,6 @@ get_header('shop');
 /**
 * woocommerce_before_main_content hook
 * @hooked woocommerce_output_content_wrapper - 10
-* @hooked woocommerce_breadcrumb - 20
 */
 
 do_action('woocommerce_before_main_content');
